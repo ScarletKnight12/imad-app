@@ -68,7 +68,7 @@ app.get('/test-db',function(req,res){
 });
 
 
-app.get('/article/article-one',function (req, res) {
+app.get('/articles/article-one',function (req, res) {
     var articleName=article.params.articleName;
     pool.query("SELECT * FROM article where title="+req.params.articleName+"'", function(err,result)
     {
