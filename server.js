@@ -79,9 +79,18 @@ app.post('/create-user',function(req,res){
             res.status(500).send(err.toString());
         }
         else{
-            res.send("User successful!!"+username);
-            
+         if(result.rows.length===0)
+            res.send("invalid!!");
+        
+        else
+        {
+           var dbString=result.rows[0].password;
+           var salt=dbString.split('$')[2];
+           var hashPassword=hash(password,salt);
+           //match password
         }
+  }
+      
   });
 });
 
@@ -105,7 +114,7 @@ app.get('/test-db',function(req,res){
 
 app.get('/articles/article-one',function (req, res) {
     var articleName=article.params.articleName;
-    pool.query("SELECT * FROM article where title="+req.params.articleName+"'", function(err,result)
+    pool.query("SELECT * FROM article WHERE title="+req.params.articleName+"'", function(err,result)
     {
        if(err){
            res.status(500).send(err.toString());
