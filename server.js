@@ -1,6 +1,7 @@
 var express = require('express');
 var morgan = require('morgan');
 var path = require('path');
+var crypto=require('crypto');
 var Pool=require('pg').Pool;
 var config={
     user: 'kaitokudo12',
@@ -9,7 +10,9 @@ var config={
     port:'5432',
     password:process.env.DB_PASSWORD
 };
+
 var app = express();
+
 app.use(morgan('combined'));
 var articleOne={
     title:' Whew! Long time since i coded in HTML!',
@@ -46,13 +49,21 @@ function createTemplate(data)
     `;  
     return htmlTemplate;
 }
-var counter=0;
-app.get('/counter',function(req,res){
-    counter=counter+1;
-    res.send(counter.toString());
-});
+
+
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'ui', 'index.html'));
+});
+
+function hash(input,salt){
+ var hashed=crypto.pbkdf25Sync(input,salt,10000,512,'sha512');   
+ return hashed.toString('hex');
+}
+
+app.get('/hash/:input', function(req,res){
+
+    var hashedString=hash(req.params.input,'this-is-some-random-string');
+    res.send(hashedString);
 });
 
 var pool= new Pool(config);
